@@ -1,0 +1,13 @@
+apiVersion: v2
+description: Coco Annotator
+name: coco-annotator
+type: application
+version: 0.0.2
+appVersion: 0.0.1
+dependencies:
+  - name: rabbitmq
+    version: 6.25.12
+    repository: https://charts.bitnami.com/bitnami
+  - name: mongodb
+    version: 7.14.1
+    repository: https://charts.bitnami.com/bitnami

@@ -1,0 +1,36 @@
+worker:
+  image: jsbroks/coco-annotator
+  tag: workers-stable
+  replicas: 1
+  nodeSelector: {}
+  resources: {}
+
+webserver:
+  image: jsbroks/coco-annotator
+  tag: webserver-stable
+  replicas: 1
+  nodeSelector: {}
+  resources: {}
+
+
+ingress:
+  webserver:
+    path: ""
+    annotations: {}
+    tls: []
+
+rabbitmq:
+  rabbitmq:
+    password: password
+    erlangCookie: annotator12345678901234567891234
+  persistence:
+    enabled: false
+
+
+mongodb:
+  mongodbRootPassword: annotator
+  mongodbDatabase: annotator
+  mongodbUsername: annotator
+  mongodbPassword: annotator
+  persistence:
+    size: 1Gi

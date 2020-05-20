@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webserver
+  labels:
+    app: {{ template "annotator.name" . }}
+    component: webserver
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.worker.replicas }}
+  strategy: {}
+  selector:
+    matchLabels:
+      app: {{ template "annotator.name" . }}
+      component: webserver
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+        checksum/annotator-configmap: {{ include (print $.Template.BasePath "/annotator-configmap.yaml") . | sha256sum }}
+      labels:
+        app: {{ template "annotator.name" . }}
+        component: webserver
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: webserver
+        envFrom:
+          - configMapRef:
+              name: "{{ template "annotator.name" . }}-env"
+        image: {{ template "webserver.image" . }}
+        imagePullPolicy: Always
+        ports:
+        - name: webserver
+          containerPort: 5000
+          protocol: TCP
+        resources:
+{{ toYaml .Values.webserver.resources | indent 10 }}
+      restartPolicy: Always
+      {{- if .Values.webserver.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.webserver.nodeSelector | indent 8 }}
+      {{- end }}
+status: {}

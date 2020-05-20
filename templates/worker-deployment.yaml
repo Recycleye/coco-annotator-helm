@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  labels:
+    app: {{ template "annotator.name" . }}
+    component: worker
+    release: {{ .Release.Name }}
+spec:
+  replicas: 1
+  strategy: {}
+  selector:
+    matchLabels:
+      app: {{ template "annotator.name" . }}
+      component: worker
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+        checksum/annotator-configmap: {{ include (print $.Template.BasePath "/annotator-configmap.yaml") . | sha256sum }}
+      labels:
+        app: {{ template "annotator.name" . }}
+        component: worker
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - image: {{ template "worker.image" . }}
+        name: worker
+        envFrom:
+          - configMapRef:
+              name: "{{ template "annotator.name" . }}-env"
+        resources:
+{{ toYaml .Values.worker.resources | indent 10 }}
+      restartPolicy: Always
+      {{- if .Values.worker.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.worker.nodeSelector | indent 8 }}
+      {{- end }}
+status: {}
