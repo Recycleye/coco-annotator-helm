@@ -3,42 +3,49 @@ kind: Deployment
 metadata:
   name: webserver
   labels:
-    app: {{ template "annotator.name" . }}
+    app: {{template "annotator.name" .}}
     component: webserver
-    release: {{ .Release.Name }}
+    release: {{.Release.Name}}
 spec:
-  replicas: {{ .Values.worker.replicas }}
+  replicas: {{.Values.worker.replicas}}
   strategy: {}
   selector:
     matchLabels:
-      app: {{ template "annotator.name" . }}
+      app: {{template "annotator.name" .}}
       component: webserver
-      release: {{ .Release.Name }}
+      release: {{.Release.Name}}
   template:
     metadata:
       annotations:
-        checksum/annotator-configmap: {{ include (print $.Template.BasePath "/annotator-configmap.yaml") . | sha256sum }}
+        checksum/annotator-configmap: {{include (print $.Template.BasePath "/annotator-configmap.yaml") . | sha256sum}}
       labels:
-        app: {{ template "annotator.name" . }}
+        app: {{template "annotator.name" .}}
         component: webserver
-        release: {{ .Release.Name }}
+        release: {{.Release.Name}}
     spec:
       containers:
-      - name: webserver
-        envFrom:
-          - configMapRef:
-              name: "{{ template "annotator.name" . }}-env"
-        image: {{ template "webserver.image" . }}
-        imagePullPolicy: Always
-        ports:
         - name: webserver
-          containerPort: 5000
-          protocol: TCP
-        resources:
-{{ toYaml .Values.webserver.resources | indent 10 }}
+          envFrom:
+            - configMapRef:
+                name: '{{template "annotator.name" .}}-env'
+          image: {{template "webserver.image" .}}
+          imagePullPolicy: Always
+          ports:
+            - name: webserver
+              containerPort: 5000
+              protocol: TCP
+          volumeMounts:
+            - name: datasets
+              mountPath: /datasets
+            - name: models
+              mountPath: /models
+{{- if .Values.webserver.resources }}
+          resources:
+{{ toYaml .Values.webserver.resources | indent 12 }}
+{{- end }}
       restartPolicy: Always
-      {{- if .Values.webserver.nodeSelector }}
+{{- if .Values.webserver.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.webserver.nodeSelector | indent 8 }}
-      {{- end }}
+{{- end }}
 status: {}

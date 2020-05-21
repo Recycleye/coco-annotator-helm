@@ -24,13 +24,16 @@ spec:
         release: {{ .Release.Name }}
     spec:
       containers:
-      - image: {{ template "worker.image" . }}
-        name: worker
-        envFrom:
-          - configMapRef:
-              name: "{{ template "annotator.name" . }}-env"
-        resources:
-{{ toYaml .Values.worker.resources | indent 10 }}
+        - image: {{ template "worker.image" . }}
+          name: worker
+          envFrom:
+            - configMapRef:
+                name: "{{ template "annotator.name" . }}-env"
+          volumeMounts:
+            - name: datasets
+              mountPath: /datasets
+          resources:
+{{ toYaml .Values.worker.resources | indent 12 }}
       restartPolicy: Always
       {{- if .Values.worker.nodeSelector }}
       nodeSelector:

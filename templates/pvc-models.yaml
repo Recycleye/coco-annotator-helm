@@ -1,0 +1,18 @@
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: models
+  namespace: {{.Release.Namespace}}
+  labels:
+    app: {{template "annotator.name" .}}
+    component: storage
+    release: {{.Release.Name}}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{.Values.persistence.models.size | quote}}
+  storageClassName: "{{.Values.persistence.models.storageClass}}"

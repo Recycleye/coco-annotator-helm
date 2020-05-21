@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ template "annotator.name" . }}-env"
+  name: "{{template "annotator.name" .}}-env"
   labels:
     app: annotator
 data:
-  MONGODB_HOST: "{{ template "mongodb.url" . }}"
-  CELERY_BROKER_URL: "amqp://user:password@coco-annotator-rabbitmq:5672//"
-  CELERY_RESULT_BACKEND: "mongodb://{{ template "annotator.name" . }}-mongodb/flask"
+  MONGODB_HOST: "{{template "mongodb.url" .}}"
+  CELERY_BROKER_URL: "{{template "broker.url" .}}"
+  CELERY_RESULT_BACKEND: "{{template "mongodb.url" .}}"
