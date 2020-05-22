@@ -34,6 +34,10 @@ spec:
               mountPath: /datasets
           resources:
 {{ toYaml .Values.worker.resources | indent 12 }}
+      volumes:
+        - name: datasets
+          persistentVolumeClaim:
+            claimName: datasets
       restartPolicy: Always
       {{- if .Values.worker.nodeSelector }}
       nodeSelector:

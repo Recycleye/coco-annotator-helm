@@ -39,6 +39,16 @@ spec:
               mountPath: /datasets
             - name: models
               mountPath: /models
+          env:
+            - name: FILE_WATCHER
+              value: "true"
+      volumes:
+        - name: datasets
+          persistentVolumeClaim:
+            claimName: datasets
+        - name: models
+          persistentVolumeClaim:
+            claimName: models
 {{- if .Values.webserver.resources }}
           resources:
 {{ toYaml .Values.webserver.resources | indent 12 }}
