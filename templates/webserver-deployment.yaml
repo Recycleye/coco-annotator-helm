@@ -42,6 +42,9 @@ spec:
           env:
             - name: FILE_WATCHER
               value: "true"
+{{- if .Values.webserver.resources }}
+          resources:
+{{ toYaml .Values.webserver.resources | indent 12 }}
       volumes:
         - name: datasets
           persistentVolumeClaim:
@@ -49,9 +52,6 @@ spec:
         - name: models
           persistentVolumeClaim:
             claimName: models
-{{- if .Values.webserver.resources }}
-          resources:
-{{ toYaml .Values.webserver.resources | indent 12 }}
 {{- end }}
       restartPolicy: Always
 {{- if .Values.webserver.nodeSelector }}
